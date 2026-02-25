@@ -130,9 +130,9 @@ export const metadata: Metadata = {
   },
 
   // Facebook
-  facebook: {
-    appId: siteConfig.facebookAppId,
-  },
+//   facebook: {
+//     appId: siteConfig.facebookAppId,
+//   },
 
   // Robots
   robots: {
@@ -212,7 +212,7 @@ export const metadata: Metadata = {
     google: siteConfig.googleVerification,
     yandex: siteConfig.yandexVerification,
     other: {
-      "msvalidate.01": siteConfig.bingVerification,
+    //   "msvalidate.01": siteConfig.bingVerification,
       "facebook-domain-verification": "your-facebook-domain-verification",
     },
   },
