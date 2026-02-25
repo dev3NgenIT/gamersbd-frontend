@@ -1,77 +1,86 @@
-import { User, Heart, RefreshCw, ShoppingCart } from "lucide-react";
+import { User, Heart, ShoppingCart } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
+import Link from "next/link";
 
 const TopBar = () => {
   return (
-    <div className="bg-[#2a2a2a] dark:bg-white text-white dark:text-gray-900 py-3 px-4 sm:px-6 flex flex-wrap items-center justify-between font-sans text-[13px] tracking-wide border-b border-gray-700 dark:border-gray-200">
-      {/* Left Side: Navigation Links */}
-      <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
-        <a
-          href="#"
-          className="hover:text-gray-300 dark:hover:text-gray-600 transition-colors uppercase font-medium"
-        >
-          Store
-        </a>
-        <a
-          href="#"
-          className="hover:text-gray-300 dark:hover:text-gray-600 transition-colors uppercase font-medium"
-        >
-          Track Order
-        </a>
-        <a
-          href="#"
-          className="hover:text-gray-300 dark:hover:text-gray-600 transition-colors uppercase font-medium"
-        >
-          About GB
-        </a>
-        <a
-          href="#"
-          className="hover:text-gray-300 dark:hover:text-gray-600 transition-colors uppercase font-medium"
-        >
-          Contact
-        </a>
-      </div>
-
-      {/* Right Side: User Actions */}
-      <div className="flex items-center gap-2 sm:gap-3 mt-2 sm:mt-0">
-        {/* Sign In - Moved from Header */}
-        <div className="flex items-center gap-1 sm:gap-2 pr-2 sm:pr-3 border-r border-gray-600 dark:border-gray-300">
-          <User size={16} className="text-gray-300 dark:text-gray-600" />
-          <a
-            href="#"
-            className="hover:text-gray-300 dark:hover:text-gray-600 whitespace-nowrap"
+    <div className="bg-gray-900 dark:bg-gray-100 text-gray-100 dark:text-gray-900 border-b border-gray-800 dark:border-gray-200">
+      <div className="container mx-auto py-2 px-4 sm:px-6 flex flex-wrap items-center justify-between font-sans text-[13px] tracking-wide">
+        {/* Left Side: Navigation Links */}
+        <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
+          <Link
+            href="/store"
+            className="hover:text-[#e87831] dark:hover:text-[#e87831] transition-colors uppercase font-medium"
           >
-            Sign in
-          </a>
+            Store
+          </Link>
+          <Link
+            href="/track-order"
+            className="hover:text-[#e87831] dark:hover:text-[#e87831] transition-colors uppercase font-medium"
+          >
+            Track Order
+          </Link>
+          <Link
+            href="/about"
+            className="hover:text-[#e87831] dark:hover:text-[#e87831] transition-colors uppercase font-medium"
+          >
+            About GB
+          </Link>
+          <Link
+            href="/contact"
+            className="hover:text-[#e87831] dark:hover:text-[#e87831] transition-colors uppercase font-medium"
+          >
+            Contact
+          </Link>
         </div>
 
-        {/* Wishlist */}
-        <div className="flex items-center gap-1 pr-2 sm:pr-3 border-r border-gray-600 dark:border-gray-300 relative">
-          <Heart
-            size={18}
-            strokeWidth={1.5}
-            className="text-gray-300 dark:text-gray-600"
-          />
-          <span className="bg-[#d93a3a] dark:bg-red-600 text-[10px] rounded-full h-4 w-4 flex items-center justify-center font-bold text-white">
-            0
-          </span>
-        </div>
+        {/* Right Side: User Actions */}
+        <div className="flex items-center gap-2 sm:gap-3 mt-2 sm:mt-0">
+          {/* Sign In / Account */}
+          <div className="flex items-center gap-1 sm:gap-2 pr-2 sm:pr-3 border-r border-gray-700 dark:border-gray-300">
+            <User size={16} className="text-gray-400 dark:text-gray-500" />
+            <Link
+              href="/signin"
+              className="hover:text-[#e87831] dark:hover:text-[#e87831] whitespace-nowrap"
+            >
+              Sign in
+            </Link>
+          </div>
 
-        {/* Cart */}
-        <div className="flex items-center gap-1 relative">
-          <ShoppingCart
-            size={18}
-            strokeWidth={1.5}
-            className="text-gray-300 dark:text-gray-600"
-          />
-          <span className="bg-[#d93a3a] dark:bg-red-600 text-[10px] rounded-full h-4 w-4 flex items-center justify-center font-bold text-white">
-            0
-          </span>
-        </div>
+          {/* Wishlist */}
+          <Link
+            href="/wishlist"
+            className="flex items-center gap-1 pr-2 sm:pr-3 border-r border-gray-700 dark:border-gray-300 relative group"
+          >
+            <Heart
+              size={18}
+              strokeWidth={1.5}
+              className="text-gray-400 dark:text-gray-500 group-hover:text-[#e87831] dark:group-hover:text-[#e87831] transition-colors"
+            />
+            <span className="bg-red-600 dark:bg-red-500 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
+              0
+            </span>
+          </Link>
 
-        {/* Theme Toggle */}
-        <div>
-          <ThemeToggle />
+          {/* Cart */}
+          <Link
+            href="/cart"
+            className="flex items-center gap-1 pr-2 sm:pr-3 border-r border-gray-700 dark:border-gray-300 relative group"
+          >
+            <ShoppingCart
+              size={18}
+              strokeWidth={1.5}
+              className="text-gray-400 dark:text-gray-500 group-hover:text-[#e87831] dark:group-hover:text-[#e87831] transition-colors"
+            />
+            <span className="bg-red-600 dark:bg-red-500 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
+              0
+            </span>
+          </Link>
+
+          {/* Theme Toggle */}
+          <div className="ml-1">
+            <ThemeToggle />
+          </div>
         </div>
       </div>
     </div>

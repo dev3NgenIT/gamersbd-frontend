@@ -1,13 +1,20 @@
+// tailwind.config.ts
 import type { Config } from "tailwindcss";
-import daisyui from "daisyui";
 
 const config: Config = {
-  darkMode: "class", // Keep this for next-themes
-  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
+  darkMode: ["class", '[data-theme="dark"]'], // This makes it work with both!
+  content: [
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
   theme: {
     extend: {},
   },
-  plugins: [daisyui],
+  plugins: [require("daisyui")],
+  daisyui: {
+    themes: true, // or your specific themes
+  },
 };
 
 export default config;
