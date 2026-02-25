@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "../components/shared/Header";
 import { ThemeProvider } from "../providers/theme-provider";
+import Footer from "../components/shared/footer/Footer";
 
 // One line to import and export metadata
 export { metadata } from "../components/metaData/metadata";
@@ -31,6 +32,7 @@ export default function RootLayout({
         <ThemeProvider>
           <Header />
           {children}
+          <Footer />
         </ThemeProvider>
       </body>
     </html>

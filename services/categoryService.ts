@@ -1,5 +1,5 @@
 // services/categoryService.ts
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "https://gamersbd-server.onrender.com/";
 
 export interface Category {
   _id: string;
