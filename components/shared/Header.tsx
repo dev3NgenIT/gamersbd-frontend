@@ -4,14 +4,14 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { categoryService } from "../../services/categoryService";
 import TopBar from "./TopBar";
-import ExpandableSearch from "./ExpandableSearch";
 import DesktopNav from "./navigation/DesktopNav";
+import ExpandableSearch from "./ExpandableSearch";
 import CategoriesDropdown from "./navigation/CategoriesDropdown";
 import SpecializedDropdown from "./navigation/SpecializedDropdown";
 import OffersDropdown from "./navigation/OffersDropdown";
 import MobileMenu from "./navigation/MobileMenu";
-import { categoryService } from "../../services/categoryService";
 
 export default function Header() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
@@ -20,8 +20,8 @@ export default function Header() {
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const dropdownTimerRef = useRef<NodeJS.Timeout | null>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  const dropdownTimerRef = useRef<NodeJS.Timeout>();
 
   // Fetch categories on component mount
   useEffect(() => {
@@ -208,7 +208,6 @@ export default function Header() {
         categories={categories}
         specialized={specialized}
         offers={offers}
-        news={[]}
       />
     </header>
   );
