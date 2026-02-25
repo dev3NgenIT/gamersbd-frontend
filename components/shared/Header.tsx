@@ -6,12 +6,12 @@ import Link from "next/link";
 import Image from "next/image";
 import TopBar from "./TopBar";
 import ExpandableSearch from "./ExpandableSearch";
-import { categoryService } from "../../services/categoryService";
+import DesktopNav from "./navigation/DesktopNav";
 import CategoriesDropdown from "./navigation/CategoriesDropdown";
 import SpecializedDropdown from "./navigation/SpecializedDropdown";
-import MobileMenu from "./navigation/MobileMenu";
-import DesktopNav from "./navigation/DesktopNav";
 import OffersDropdown from "./navigation/OffersDropdown";
+import MobileMenu from "./navigation/MobileMenu";
+import { categoryService } from "../../services/categoryService";
 
 export default function Header() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
@@ -19,6 +19,7 @@ export default function Header() {
   const [activeCategoryTab, setActiveCategoryTab] = useState<string>("");
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const dropdownTimerRef = useRef<NodeJS.Timeout>();
 
@@ -26,15 +27,29 @@ export default function Header() {
   useEffect(() => {
     const fetchCategories = async () => {
       setLoading(true);
-      const data = await categoryService.getAllCategories();
-      const tree = categoryService.buildCategoryTree(data);
-      setCategories(tree);
+      setError(null);
 
-      // Set first category as active if available
-      if (tree.length > 0) {
-        setActiveCategoryTab(tree[0].name);
+      try {
+        const data = await categoryService.getAllCategories();
+        console.log("Fetched categories:", data);
+
+        if (data && data.length > 0) {
+          const tree = categoryService.buildCategoryTree(data);
+          setCategories(tree);
+
+          if (tree.length > 0) {
+            setActiveCategoryTab(tree[0].name);
+          }
+        } else {
+          setCategories([]);
+        }
+      } catch (err) {
+        console.error("Error in fetchCategories:", err);
+        setError("Failed to load categories");
+        setCategories([]);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     fetchCategories();
@@ -62,17 +77,6 @@ export default function Header() {
     { name: "Seasonal Sale", href: "/offers/seasonal", badge: "Up to 70%" },
   ];
 
-  const news = [
-    { name: "New Arrivals", href: "/news/new-arrivals", date: "Today" },
-    { name: "Product Launches", href: "/news/launches", date: "This Week" },
-    { name: "Tech Updates", href: "/news/tech", date: "Latest" },
-    { name: "Store Events", href: "/news/events", date: "Upcoming" },
-    { name: "Blog Posts", href: "/news/blog", date: "New" },
-    { name: "Reviews", href: "/news/reviews", date: "Trending" },
-    { name: "Community", href: "/news/community", date: "Active" },
-    { name: "Newsletter", href: "/news/newsletter", date: "Subscribe" },
-  ];
-
   // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -89,13 +93,12 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Handle dropdown with delay for better UX
   const handleMouseEnter = (dropdown: string) => {
+    console.log("Mouse entered:", dropdown);
     if (dropdownTimerRef.current) {
       clearTimeout(dropdownTimerRef.current);
     }
     setActiveDropdown(dropdown);
-    // Set default category tab when opening categories dropdown
     if (
       dropdown === "categories" &&
       categories.length > 0 &&
@@ -106,23 +109,23 @@ export default function Header() {
   };
 
   const handleMouseLeave = () => {
+    console.log("Mouse left");
     dropdownTimerRef.current = setTimeout(() => {
       setActiveDropdown(null);
     }, 150);
   };
 
   return (
-    <header ref={headerRef}>
+    <header ref={headerRef} className="relative">
       <TopBar />
 
       {/* Main Header */}
       <div
         className="bg-[#191919] dark:bg-white shadow-sm relative"
-        style={{ zIndex: 100 }}
+        style={{ zIndex: 50 }}
       >
         <div className="container mx-auto">
           <div className="navbar py-3">
-            {/* Left Section - Logo & Mobile Menu */}
             <div className="navbar-start">
               <button
                 className="btn btn-ghost lg:hidden"
@@ -150,13 +153,12 @@ export default function Header() {
                   alt="Gamersbd"
                   width={180}
                   height={50}
-                  className="h-auto w-auto"
+                  className="h-auto w-auto -mt-2"
                   priority
                 />
               </Link>
             </div>
 
-            {/* Desktop Navigation */}
             <div className="navbar-center hidden lg:flex">
               <DesktopNav
                 activeDropdown={activeDropdown}
@@ -165,7 +167,6 @@ export default function Header() {
               />
             </div>
 
-            {/* Right Section - Search */}
             <div className="navbar-end">
               <ExpandableSearch />
             </div>
@@ -173,22 +174,18 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Dropdown Panels */}
-      <div className="relative" style={{ zIndex: 99 }}>
-        {/* Categories Dropdown - Dynamic from API */}
-        {activeDropdown === "categories" &&
-          !loading &&
-          categories.length > 0 && (
-            <CategoriesDropdown
-              categories={categories}
-              activeCategoryTab={activeCategoryTab}
-              onCategoryChange={setActiveCategoryTab}
-              onMouseEnter={() => handleMouseEnter("categories")}
-              onMouseLeave={handleMouseLeave}
-            />
-          )}
+      {/* Dropdown Container - This needs to be positioned absolutely */}
+      <div className="absolute left-0 right-0" style={{ zIndex: 100 }}>
+        {activeDropdown === "categories" && !loading && (
+          <CategoriesDropdown
+            categories={categories}
+            activeCategoryTab={activeCategoryTab}
+            onCategoryChange={setActiveCategoryTab}
+            onMouseEnter={() => handleMouseEnter("categories")}
+            onMouseLeave={handleMouseLeave}
+          />
+        )}
 
-        {/* Specialized Dropdown */}
         {activeDropdown === "specialized" && (
           <SpecializedDropdown
             items={specialized}
@@ -197,7 +194,6 @@ export default function Header() {
           />
         )}
 
-        {/* Offers Dropdown */}
         {activeDropdown === "offers" && (
           <OffersDropdown
             items={offers}
@@ -205,24 +201,14 @@ export default function Header() {
             onMouseLeave={handleMouseLeave}
           />
         )}
-
-        {/* News Dropdown */}
-        {/* {activeDropdown === "news" && (
-          <NewsDropdown
-            items={news}
-            onMouseEnter={() => handleMouseEnter("news")}
-            onMouseLeave={handleMouseLeave}
-          />
-        )} */}
       </div>
 
-      {/* Mobile Menu */}
       <MobileMenu
         isOpen={isMobileMenuOpen}
         categories={categories}
         specialized={specialized}
         offers={offers}
-        // news={news}
+        news={[]}
       />
     </header>
   );
