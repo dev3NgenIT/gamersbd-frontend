@@ -15,8 +15,18 @@ interface SiteConfig {
   facebookAppId?: string;
   themeColor?: string;
   backgroundColor?: string;
+  supportEmail?: string;
+  supportPhone?: string;
+  address?: {
+    street?: string;
+    city?: string;
+    region?: string;
+    postalCode?: string;
+    country?: string;
+  };
 }
 
+// ✅ First export - KEEP THIS
 export const siteConfig: SiteConfig = {
   name: "GamersBD - Your Ultimate Gaming Destination",
   shortName: "GBD",
@@ -43,8 +53,18 @@ export const siteConfig: SiteConfig = {
   facebookAppId: "your-facebook-app-id",
   themeColor: "#191919",
   backgroundColor: "#ffffff",
+  supportEmail: "support@gamersbd.com",
+  supportPhone: "+880123456789",
+  address: {
+    street: "123 Gaming Street",
+    city: "Dhaka",
+    region: "Dhaka",
+    postalCode: "1000",
+    country: "Bangladesh",
+  },
 };
 
+// ✅ Second export - KEEP THIS
 export const metadata: Metadata = {
   // Basic Metadata
   title: {
@@ -94,9 +114,9 @@ export const metadata: Metadata = {
     ],
     locale: "en_US",
     type: "website",
-    countryName: "Bangladesh",
-    emails: ["support@gamersbd.com"],
-    phoneNumbers: ["+880123456789"],
+    countryName: siteConfig.address?.country || "Bangladesh",
+    emails: [siteConfig.supportEmail || "support@gamersbd.com"],
+    phoneNumbers: [siteConfig.supportPhone || "+880123456789"],
   },
 
   // Twitter Card
@@ -131,20 +151,22 @@ export const metadata: Metadata = {
   // Icons
   icons: {
     icon: [
-      { url: "/images/favicon.ico" },
+      { url: "/favicon.ico", sizes: "any" },
       { url: "/icon-16x16.png", sizes: "16x16", type: "image/png" },
       { url: "/icon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icon-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512x512.png", sizes: "512x512", type: "image/png" },
     ],
     apple: [
-      { url: "/apple-icon-57x57.png", sizes: "57x57" },
-      { url: "/apple-icon-60x60.png", sizes: "60x60" },
-      { url: "/apple-icon-72x72.png", sizes: "72x72" },
-      { url: "/apple-icon-76x76.png", sizes: "76x76" },
-      { url: "/apple-icon-114x114.png", sizes: "114x114" },
-      { url: "/apple-icon-120x120.png", sizes: "120x120" },
-      { url: "/apple-icon-144x144.png", sizes: "144x144" },
-      { url: "/apple-icon-152x152.png", sizes: "152x152" },
-      { url: "/apple-icon-180x180.png", sizes: "180x180" },
+      { url: "/apple-icon-57x57.png", sizes: "57x57", type: "image/png" },
+      { url: "/apple-icon-60x60.png", sizes: "60x60", type: "image/png" },
+      { url: "/apple-icon-72x72.png", sizes: "72x72", type: "image/png" },
+      { url: "/apple-icon-76x76.png", sizes: "76x76", type: "image/png" },
+      { url: "/apple-icon-114x114.png", sizes: "114x114", type: "image/png" },
+      { url: "/apple-icon-120x120.png", sizes: "120x120", type: "image/png" },
+      { url: "/apple-icon-144x144.png", sizes: "144x144", type: "image/png" },
+      { url: "/apple-icon-152x152.png", sizes: "152x152", type: "image/png" },
+      { url: "/apple-icon-180x180.png", sizes: "180x180", type: "image/png" },
     ],
     other: [
       {
@@ -156,7 +178,7 @@ export const metadata: Metadata = {
   },
 
   // Manifest for PWA
-  manifest: "/site.webmanifest",
+  manifest: "/manifest.json",
 
   // Theme
   themeColor: siteConfig.themeColor,
@@ -212,10 +234,13 @@ export const metadata: Metadata = {
     "msapplication-TileColor": siteConfig.themeColor || "#191919",
     "msapplication-TileImage": "/ms-icon-144x144.png",
     "msapplication-config": "/browserconfig.xml",
-    "og:country-name": "Bangladesh",
-    "og:region": "BD",
-    "og:postal-code": "1000",
-    "og:locality": "Dhaka",
+    "og:country-name": siteConfig.address?.country || "Bangladesh",
+    "og:region": siteConfig.address?.region || "BD",
+    "og:postal-code": siteConfig.address?.postalCode || "1000",
+    "og:locality": siteConfig.address?.city || "Dhaka",
+    "og:street-address": siteConfig.address?.street || "",
+    "og:phone_number": siteConfig.supportPhone || "",
+    "og:email": siteConfig.supportEmail || "",
   },
 };
 
@@ -248,5 +273,55 @@ export function generatePageMetadata(
   };
 }
 
-// Export siteConfig for use in components
-export { siteConfig };
+// Helper for category pages
+export function generateCategoryMetadata(
+  categoryName: string,
+  categoryDescription: string,
+  categoryPath: string,
+): Metadata {
+  return {
+    title: `${categoryName} | ${siteConfig.name}`,
+    description: categoryDescription,
+    alternates: {
+      canonical: categoryPath,
+    },
+    openGraph: {
+      title: `${categoryName} | ${siteConfig.name}`,
+      description: categoryDescription,
+      url: `${siteConfig.url}${categoryPath}`,
+      images: [
+        {
+          url: `${siteConfig.url}/images/categories/${categoryName.toLowerCase().replace(/\s+/g, '-')}.jpg`,
+          width: 1200,
+          height: 630,
+          alt: categoryName,
+        },
+      ],
+    },
+  };
+}
+
+// Helper for product pages
+export function generateProductMetadata(
+  productName: string,
+  productDescription: string,
+  productPath: string,
+  productImage?: string,
+): Metadata {
+  return {
+    title: `Buy ${productName} | ${siteConfig.name}`,
+    description: productDescription.substring(0, 160),
+    alternates: {
+      canonical: productPath,
+    },
+    openGraph: {
+      title: `${productName} | ${siteConfig.name}`,
+      description: productDescription.substring(0, 160),
+      url: `${siteConfig.url}${productPath}`,
+      images: productImage ? [{ url: productImage }] : undefined,
+    },
+  };
+}
+
+// 🗑️ REMOVE THIS LINE AT THE BOTTOM:
+// export { siteConfig };
