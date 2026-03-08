@@ -1,87 +1,94 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Search } from "lucide-react"; // You can also use any icon library or SVG
+import { Search, X } from "lucide-react";
 
 const ExpandableSearch = () => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Handle click outside to collapse
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        searchRef.current &&
-        !searchRef.current.contains(event.target as Node)
-      ) {
-        setIsExpanded(false);
-        setSearchQuery(""); // Optional: clear search when collapsing
+    if (isOpen && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsOpen(false);
+        setSearchQuery("");
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  // Auto-focus input when expanded
-  useEffect(() => {
-    if (isExpanded && inputRef.current) {
-      inputRef.current.focus();
+    if (isOpen) {
+      document.addEventListener("keydown", handleEsc);
+      document.body.style.overflow = "hidden";
     }
-  }, [isExpanded]);
+
+    return () => {
+      document.removeEventListener("keydown", handleEsc);
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       console.log("Searching for:", searchQuery);
-      // Add your search logic here
       // router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+      setIsOpen(false);
+      setSearchQuery("");
     }
   };
 
   return (
-    <div
-      ref={searchRef}
-      className="relative flex items-center"
-      onMouseEnter={() => setIsExpanded(true)}
-    >
-      <form onSubmit={handleSearch} className="flex items-center">
-        {/* Search Input - expands on hover */}
-        <input
-          ref={inputRef}
-          type="text"
-          placeholder="Search products..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className={`
-            h-10 rounded-l-lg border border-r-0 border-base-300 
-            bg-base-100 px-4 py-2 text-sm outline-none
-            focus:ring-2 focus:ring-primary/50
-            transition-all duration-300 ease-in-out
-            ${
-              isExpanded
-                ? "w-64 opacity-100 visible"
-                : "w-0 opacity-0 invisible p-0 border-none"
-            }
-          `}
-        />
+    <>
+      <button
+        onClick={() => setIsOpen(true)}
+        className="flex h-10 w-10 items-center justify-center bg-transparent border border-[#2a2a2a] text-white rounded-lg hover:bg-[#2a2a2a] transition-all duration-200"
+        aria-label="Open search"
+      >
+        <Search className="h-5 w-5" />
+      </button>
 
-        {/* Search Button - always visible, square shape */}
-        <button
-          type="submit"
-          className={`
-            flex h-10 w-10 items-center justify-center
-            bg-transparent border text-white rounded-lg transition-all duration-200
-            ${isExpanded ? "rounded-l-none" : "rounded-lg"}
-          `}
-          aria-label="Search"
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 backdrop-blur-sm"
+          onClick={() => {
+            setIsOpen(false);
+            setSearchQuery("");
+          }}
         >
-          <Search className="h-5 w-5" />
-        </button>
-      </form>
-    </div>
+          <div
+            className="mt-20 w-full max-w-2xl mx-4 bg-base-100 rounded-lg shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <form onSubmit={handleSearch} className="flex items-center">
+              <input
+                ref={inputRef}
+                type="text"
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="flex-1 h-14 px-6 text-lg bg-transparent outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  setIsOpen(false);
+                  setSearchQuery("");
+                }}
+                className="h-14 w-14 flex items-center justify-center hover:bg-base-200"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

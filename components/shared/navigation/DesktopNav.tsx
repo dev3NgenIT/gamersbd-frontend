@@ -15,7 +15,6 @@ const DesktopNav = ({
   onMouseLeave,
 }: DesktopNavProps) => {
   const navItems = [
-    { id: "categories", label: "CATEGORIES" },
     { id: "specialized", label: "SPECIALIZED" },
     { id: "offers", label: "OFFERS" },
   ];
@@ -31,35 +30,41 @@ const DesktopNav = ({
         >
           <Link
             href="#"
-            className="font-medium text-white dark:text-gray-900 transition-colors cursor-pointer"
+            className="font-medium font-lato text-white dark:text-gray-900 transition-colors cursor-pointer flex items-center"
           >
             {item.label}
-            {item.id !== "news" && (
-              <svg
-                className={`w-4 h-4 ml-1 transition-transform duration-200 ${
-                  activeDropdown === item.id ? "rotate-0" : "rotate-180"
-                }`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            )}
+            <svg
+              className={`w-4 h-4 ml-1 transition-transform duration-200 ${
+                activeDropdown === item.id ? "rotate-180" : ""
+              }`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
           </Link>
         </li>
       ))}
       <li>
         <Link
           href="/contact-us"
-          className="font-medium text-white dark:text-gray-900 transition-colors cursor-pointer"
+          className="font-medium font-lato text-white dark:text-gray-900 transition-colors cursor-pointer"
         >
-          Contact Us
+          CONTACT
+        </Link>
+      </li>
+      <li>
+        <Link
+          href="/contact-us"
+          className="font-medium font-lato text-white dark:text-gray-900 transition-colors cursor-pointer"
+        >
+          NEWS
         </Link>
       </li>
     </ul>

@@ -1,7 +1,11 @@
 // components/ProductSlider.tsx
 "use client";
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import React, { useState, useRef } from "react";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ShoppingCartIcon,
+} from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
 
 // Sample product data based on your image
 const products = [
@@ -12,8 +16,7 @@ const products = [
     price: 864,
     originalPrice: 950,
     image:
-      "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    bgColor: "bg-[#2A2A2A] dark:bg-white",
+      "https://gamersbd.com/wp-content/uploads/2022/06/b4dc4-24-2-300x375.jpg",
   },
   {
     id: 2,
@@ -22,8 +25,7 @@ const products = [
     price: 650,
     originalPrice: 780,
     image:
-      "https://images.unsplash.com/photo-1578587018452-892bacefd3f2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    bgColor: "bg-[#2A2A2A] dark:bg-white",
+      "https://gamersbd.com/wp-content/uploads/2016/01/egs-cyberpunk2077-cdprojektred-g1a-13-02-24-22-1920x1080-dd4dcc601c17-300x375.jpg",
   },
   {
     id: 3,
@@ -32,8 +34,7 @@ const products = [
     price: 520,
     originalPrice: 620,
     image:
-      "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    bgColor: "bg-[#2A2A2A] dark:bg-white",
+      "https://gamersbd.com/wp-content/uploads/2016/03/egs-cyberpunk2077-cdprojektred-g1a-03-1920x1080-c25ac94167df-300x375.jpg",
   },
   {
     id: 4,
@@ -42,28 +43,25 @@ const products = [
     price: 720,
     originalPrice: 850,
     image:
-      "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    bgColor: "bg-[#2A2A2A] dark:bg-white",
+      "https://gamersbd.com/wp-content/uploads/2015/12/egs-finalfantasyviiremakeintergrade-squareenix-g1a-01-1920x1080-05bc7f9ce725-300x375.jpg",
   },
   {
     id: 5,
-    name: "Blouse",
-    category: "Contemporary",
-    price: 550,
-    originalPrice: 680,
+    name: "Denim Jacket",
+    category: "Casual",
+    price: 1200,
+    originalPrice: 1500,
     image:
-      "https://images.unsplash.com/photo-162420611 2918-f140f087f9b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    bgColor: "bg-[#2A2A2A] dark:bg-white",
+      "https://gamersbd.com/wp-content/uploads/2022/06/b4dc4-24-2-300x375.jpg",
   },
   {
     id: 6,
-    name: "Surplice Top",
-    category: "Contemporary",
-    price: 500,
-    originalPrice: 600,
+    name: "Graphic Tee",
+    category: "Streetwear",
+    price: 450,
+    originalPrice: 550,
     image:
-      "https://images.unsplash.com/photo-1614251056216-f1d4b13507f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    bgColor: "bg-[#2A2A2A] dark:bg-white",
+      "https://gamersbd.com/wp-content/uploads/2016/01/egs-cyberpunk2077-cdprojektred-g1a-13-02-24-22-1920x1080-dd4dcc601c17-300x375.jpg",
   },
 ];
 
@@ -71,13 +69,14 @@ const ProductSlider = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
+  const [itemsToShow, setItemsToShow] = useState(4);
+  const [imagesLoaded, setImagesLoaded] = useState<{ [key: number]: boolean }>(
+    {},
+  );
+  const [imageErrors, setImageErrors] = useState<{ [key: number]: boolean }>(
+    {},
+  );
   const sliderRef = useRef<HTMLDivElement>(null);
-
-  const itemsPerView = {
-    mobile: 1,
-    tablet: 2,
-    desktop: 4,
-  };
 
   const getItemsPerView = () => {
     if (typeof window !== "undefined") {
@@ -87,9 +86,7 @@ const ProductSlider = () => {
     return 1;
   };
 
-  const [itemsToShow, setItemsToShow] = useState(4);
-
-  React.useEffect(() => {
+  useEffect(() => {
     const handleResize = () => {
       setItemsToShow(getItemsPerView());
     };
@@ -100,6 +97,13 @@ const ProductSlider = () => {
   }, []);
 
   const maxIndex = Math.max(0, products.length - itemsToShow);
+
+  // Reset currentIndex if it exceeds maxIndex
+  useEffect(() => {
+    if (currentIndex > maxIndex) {
+      setCurrentIndex(maxIndex);
+    }
+  }, [currentIndex, maxIndex]);
 
   const nextSlide = () => {
     setCurrentIndex((prev) => Math.min(prev + 1, maxIndex));
@@ -129,30 +133,41 @@ const ProductSlider = () => {
     }
   };
 
+  const handleImageLoad = (productId: number) => {
+    setImagesLoaded((prev) => ({ ...prev, [productId]: true }));
+  };
+
+  const handleImageError = (productId: number) => {
+    setImageErrors((prev) => ({ ...prev, [productId]: true }));
+    setImagesLoaded((prev) => ({ ...prev, [productId]: true })); // Mark as loaded to hide spinner
+  };
+
+  const calculateDiscount = (price: number, originalPrice: number) => {
+    return Math.round(((originalPrice - price) / originalPrice) * 100);
+  };
+
   return (
     <section className="py-12 bg-[#1a1a1a] dark:bg-white transition-colors duration-300">
-      <div className="container mx-auto ">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold text-white dark:text-black">
+            <h2 className="text-3xl md:text-4xl text-white dark:text-black">
               MEGA Sale Spotlight
             </h2>
-            <p className="mt-2 text-gray-600 dark:text-gray-400">
-              Shop our hottest picks at incredible prices
-            </p>
           </div>
 
           {/* Navigation Buttons */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 self-end sm:self-auto">
             <button
               onClick={prevSlide}
               disabled={currentIndex === 0}
               className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
                 currentIndex === 0
-                  ? "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed"
-                  : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
+                  ? "bg-gray-800 dark:bg-gray-200 text-gray-600 dark:text-gray-400 cursor-not-allowed"
+                  : "bg-gray-700 dark:bg-gray-300 text-white dark:text-gray-800 hover:bg-gray-600 dark:hover:bg-gray-400"
               }`}
+              aria-label="Previous slide"
             >
               <ChevronLeftIcon className="w-5 h-5" />
             </button>
@@ -161,16 +176,17 @@ const ProductSlider = () => {
               disabled={currentIndex >= maxIndex}
               className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
                 currentIndex >= maxIndex
-                  ? "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed"
-                  : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
+                  ? "bg-gray-800 dark:bg-gray-200 text-gray-600 dark:text-gray-400 cursor-not-allowed"
+                  : "bg-gray-700 dark:bg-gray-300 text-white dark:text-gray-800 hover:bg-gray-600 dark:hover:bg-gray-400"
               }`}
+              aria-label="Next slide"
             >
               <ChevronRightIcon className="w-5 h-5" />
             </button>
           </div>
         </div>
 
-        {/* Slider Container */}
+        {/* Slider */}
         <div
           ref={sliderRef}
           className="overflow-hidden"
@@ -187,62 +203,95 @@ const ProductSlider = () => {
             {products.map((product) => (
               <div
                 key={product.id}
-                className="flex-shrink-0 w-full md:w-[calc(50%-12px)] lg:w-[calc(25%-18px)] group"
+                className="flex-shrink-0 w-full"
                 style={{
-                  flexBasis: `calc(${100 / itemsToShow}% - ${itemsToShow > 1 ? 24 : 0}px)`,
+                  flexBasis: `calc(${100 / itemsToShow}% - ${
+                    itemsToShow > 1 ? (24 * (itemsToShow - 1)) / itemsToShow : 0
+                  }px)`,
                 }}
               >
-                <div className="relative overflow-hidden rounded-2xl bg-gray-50 dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300">
-                  {/* Product Image with Background Color */}
-                  <div
-                    className={`${product.bgColor} aspect-square p-8 relative overflow-hidden`}
-                  >
+                <div className="relative group overflow-hidden rounded-2xl transition-all duration-300">
+                  {/* Product Image with Loading State */}
+                  <div className="relative w-full aspect-square overflow-hidden rounded-2xl bg-gray-800 dark:bg-gray-200">
+                    {/* Loading Spinner */}
+                    {!imagesLoaded[product.id] && !imageErrors[product.id] && (
+                      <div className="absolute inset-0 flex items-center justify-center z-10 bg-gray-800 dark:bg-gray-200">
+                        <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+                      </div>
+                    )}
+
+                    {/* Error Fallback */}
+                    {imageErrors[product.id] && (
+                      <div className="absolute inset-0 flex items-center justify-center z-10 bg-gray-800 dark:bg-gray-200">
+                        <div className="text-center">
+                          <div className="text-gray-400 text-xs">
+                            Failed to load
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
                     <img
                       src={product.image}
                       alt={product.name}
-                      className="w-full h-full object-contain transform group-hover:scale-110 transition-transform duration-500"
+                      className={`absolute inset-0 w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500 ${
+                        imagesLoaded[product.id] && !imageErrors[product.id]
+                          ? "opacity-100"
+                          : "opacity-0"
+                      }`}
+                      onLoad={() => handleImageLoad(product.id)}
+                      onError={() => handleImageError(product.id)}
+                      loading="lazy"
                     />
 
-                    {/* Discount Badge */}
-                    <div className="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                      -
-                      {Math.round(
-                        ((product.originalPrice - product.price) /
-                          product.originalPrice) *
-                          100,
+                    {/* Discount Badge - Show only if image loaded successfully */}
+                    {imagesLoaded[product.id] &&
+                      !imageErrors[product.id] &&
+                      product.originalPrice && (
+                        <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-20">
+                          -
+                          {calculateDiscount(
+                            product.price,
+                            product.originalPrice,
+                          )}
+                          %
+                        </div>
                       )}
-                      %
-                    </div>
-
-                    {/* Quick View Overlay */}
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                      <button className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white px-4 py-2 rounded-lg font-medium transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                        Quick View
-                      </button>
-                    </div>
                   </div>
 
                   {/* Product Info */}
-                  <div className="p-4 bg-[#2A2A2A] dark:bg-white">
-                    <p className="text-sm text-white dark:text-black mb-1">
+                  <div className="p-4">
+                    <p className="text-sm text-gray-400 dark:text-gray-600 mb-1">
                       {product.category}
                     </p>
-                    <h3 className="text-lg font-semibold text-white dark:text-black mb-2">
-                      {product.name}
-                    </h3>
-                    <div className="flex items-center gap-2">
-                      <span className="text-2xl font-bold text-white dark:text-black">
-                        ${product.price}
-                      </span>
-                      <span className="text-sm text-white dark:text-black line-through">
-                        ${product.originalPrice}
-                      </span>
+
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-normal text-white dark:text-black">
+                        {product.name}
+                      </h3>
+                      <button
+                        className="p-1.5 rounded-full hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors"
+                        aria-label={`Add ${product.name} to cart`}
+                      >
+                        <ShoppingCartIcon className="w-4 h-4 text-white dark:text-black" />
+                      </button>
                     </div>
 
-                    {/* Add to Cart Button */}
-                    <button className="w-full mt-4 px-4 py-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-gray-800 dark:hover:bg-gray-100">
-                      Add to Cart
-                    </button>
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="text-white dark:text-black font-semibold text-lg">
+                        ${product.price}
+                      </span>
+                      {product.originalPrice && (
+                        <>
+                          <span className="text-sm text-gray-400 dark:text-gray-600 line-through">
+                            ${product.originalPrice}
+                          </span>
+                          <span className="text-xs text-[#d88616] dark:text-green-600 font-medium">
+                            Save ${product.originalPrice - product.price}
+                          </span>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -250,15 +299,38 @@ const ProductSlider = () => {
           </div>
         </div>
 
-        {/* Progress Bar */}
-        <div className="mt-8 flex justify-center">
-          <div className="w-48 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+        {/* Progress Bar and Pagination */}
+        <div className="mt-8 flex flex-col items-center gap-4">
+          {/* Progress Bar */}
+          <div className="w-48 h-1 bg-gray-800 dark:bg-gray-200 rounded-full overflow-hidden">
             <div
-              className="h-full bg-blue-600 dark:bg-blue-500 rounded-full transition-all duration-300"
+              className="h-full bg-[#d88616] dark:bg-green-600 rounded-full transition-all duration-300"
               style={{
-                width: `${((currentIndex + itemsToShow) / products.length) * 100}%`,
+                width:
+                  maxIndex > 0 ? `${(currentIndex / maxIndex) * 100}%` : "0%",
               }}
             />
+          </div>
+
+          {/* Pagination Dots for Mobile */}
+          <div className="flex justify-center gap-2 md:hidden">
+            {Array.from({ length: maxIndex + 1 }).map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentIndex(idx)}
+                className={`w-2 h-2 rounded-full transition-all ${
+                  currentIndex === idx
+                    ? "w-4 bg-blue-600 dark:bg-blue-500"
+                    : "bg-gray-600 dark:bg-gray-400"
+                }`}
+                aria-label={`Go to slide ${idx + 1}`}
+              />
+            ))}
+          </div>
+
+          {/* Slide Counter for Desktop */}
+          <div className="hidden md:block text-sm text-gray-400 dark:text-gray-600">
+            {currentIndex + 1} / {maxIndex + 1}
           </div>
         </div>
       </div>

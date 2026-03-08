@@ -1,50 +1,118 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useRef } from "react";
 
 interface OfferItem {
   name: string;
   href: string;
   badge: string;
+  description?: string;
+  discount?: string;
+  endDate?: string;
 }
 
 interface OffersDropdownProps {
   items: OfferItem[];
   onMouseEnter: () => void;
   onMouseLeave: () => void;
+  isSticky?: boolean;
 }
 
-const OffersDropdown = ({ items, onMouseEnter, onMouseLeave }: OffersDropdownProps) => {
+const OffersDropdown = ({ 
+  items, 
+  onMouseEnter, 
+  onMouseLeave,
+  isSticky = false 
+}: OffersDropdownProps) => {
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
   // Group offers by type for better organization
-  const hotDeals = items.filter(item => item.badge.includes("Hot") || item.badge.includes("Limited"));
-  const salesOffers = items.filter(item => item.badge.includes("% Off") || item.badge.includes("Save"));
-  const specialOffers = items.filter(item => !hotDeals.includes(item) && !salesOffers.includes(item));
+  const hotDeals = items.filter(item => 
+    item.badge.includes("Hot") || 
+    item.badge.includes("Limited") || 
+    item.badge.includes("🔥")
+  );
+  
+  const salesOffers = items.filter(item => 
+    item.badge.includes("% Off") || 
+    item.badge.includes("Save") || 
+    item.badge.includes("50%")
+  );
+  
+  const specialOffers = items.filter(item => 
+    !hotDeals.includes(item) && 
+    !salesOffers.includes(item)
+  );
+
+  // Get badge color based on content
+  const getBadgeStyles = (badge: string) => {
+    if (badge.includes('Hot') || badge.includes('🔥')) {
+      return 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800';
+    }
+    if (badge.includes('% Off') || badge.includes('50%')) {
+      return 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 border-green-200 dark:border-green-800';
+    }
+    if (badge.includes('Limited')) {
+      return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800';
+    }
+    if (badge.includes('Save')) {
+      return 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800';
+    }
+    if (badge.includes('Bonus')) {
+      return 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800';
+    }
+    return 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700';
+  };
 
   return (
     <div
-      className="absolute left-0 right-0 bg-base-100 shadow-sm border-t border-base-200 p-8"
+      ref={dropdownRef}
+      className={`bg-white dark:bg-gray-900 shadow-xl border-t border-gray-200 dark:border-gray-800 py-8 max-w-7xl mx-auto px-4 transition-all duration-300 ${
+        isSticky ? 'fixed left-0 right-0 mx-auto' : 'absolute left-0 right-0'
+      }`}
+      style={{
+        top: isSticky ? '73px' : '100%',
+        zIndex: 100,
+        maxHeight: 'calc(100vh - 100px)',
+        overflowY: 'auto',
+      }}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      <div className="container mx-auto">
-        <div className="max-w-7xl mx-auto">
-          {/* Featured Banner */}
-          <div className="mb-6 bg-gradient-to-r from-red-500/10 to-orange-500/10 rounded-lg p-4 border border-red-200 dark:border-red-800">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <span className="text-3xl">🏷️</span>
-                <div>
-                  <h3 className="font-bold text-lg">Special Offers & Deals</h3>
-                  <p className="text-sm text-base-content/70">Limited time offers, grab them while stocks last!</p>
+      <div className="max-w-7xl mx-auto">
+        {/* Featured Banner */}
+        <div className="mb-8 bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-950/30 dark:to-orange-950/30 rounded-xl p-6 border border-red-200 dark:border-red-800/50">
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 bg-red-100 dark:bg-red-900/50 rounded-full flex items-center justify-center text-3xl">
+                🏷️
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+                  Special Offers & Deals
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Limited time offers, grab them while stocks last!
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="text-right">
+                <div className="text-sm font-medium text-red-600 dark:text-red-400">
+                  ⏰ Flash Sale Ends in:
+                </div>
+                <div className="text-lg font-bold text-gray-900 dark:text-white">
+                  23:59:45
                 </div>
               </div>
               <Link
                 href="/offers"
-                className="text-sm text-primary hover:text-primary/80 flex items-center gap-1 font-medium"
+                className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors shadow-lg shadow-red-600/20 hover:shadow-xl hover:shadow-red-600/30 flex items-center gap-2 group"
               >
                 View All Offers
                 <svg
-                  className="w-4 h-4"
+                  className="w-4 h-4 group-hover:translate-x-1 transition-transform"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -59,115 +127,70 @@ const OffersDropdown = ({ items, onMouseEnter, onMouseLeave }: OffersDropdownPro
               </Link>
             </div>
           </div>
+        </div>
 
-          {/* Offers Grid */}
-          <div className="grid grid-cols-4 gap-4">
-            {items.map((item, index) => (
-              <Link
-                key={index}
-                href={item.href}
-                className="group relative flex items-center justify-between p-4 rounded-lg hover:bg-base-200 transition-all duration-200 border border-transparent hover:border-base-300 hover:shadow-md"
-              >
-                <div>
-                  <span className="font-medium group-hover:text-primary transition-colors">
-                    {item.name}
-                  </span>
-                  {/* Optional: Add description or additional info */}
-                </div>
-                
-                {/* Badge with different styles based on content */}
-                <span className={`
-                  badge badge-sm font-bold
-                  ${item.badge.includes('Hot') ? 'badge-secondary animate-pulse' : ''}
-                  ${item.badge.includes('% Off') ? 'badge-success' : ''}
-                  ${item.badge.includes('Limited') ? 'badge-warning' : ''}
-                  ${item.badge.includes('Save') ? 'badge-info' : ''}
-                  ${item.badge.includes('Bonus') ? 'badge-accent' : ''}
-                  ${!item.badge.includes('Hot') && !item.badge.includes('% Off') && 
-                    !item.badge.includes('Limited') && !item.badge.includes('Save') && 
-                    !item.badge.includes('Bonus') ? 'badge-primary' : ''}
-                `}>
+        {/* Main Offers Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {items.map((item, index) => (
+            <Link
+              key={index}
+              href={item.href}
+              className="group relative p-5 rounded-xl bg-gray-50 dark:bg-gray-800/50 hover:bg-white dark:hover:bg-gray-800 border-2 border-transparent hover:border-red-200 dark:hover:border-red-900 transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+            >
+              {/* Badge */}
+              <div className="absolute -top-2 -right-2 z-10">
+                <span className={`px-3 py-1 text-xs font-bold rounded-full border ${getBadgeStyles(item.badge)} shadow-lg`}>
                   {item.badge}
                 </span>
+              </div>
 
-                {/* Hover effect overlay */}
-                <div className="absolute inset-0 rounded-lg bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none" />
-              </Link>
-            ))}
-          </div>
-
-          {/* Additional Categories Section */}
-          <div className="mt-8 grid grid-cols-3 gap-4 pt-4 border-t border-base-200">
-            {/* Today's Super Deals */}
-            {hotDeals.length > 0 && (
-              <div>
-                <h4 className="font-medium text-sm mb-2 flex items-center gap-1">
-                  <span className="text-red-500">🔥</span> Hot Deals
+              {/* Content */}
+              <div className="flex flex-col h-full">
+                <div className="text-3xl mb-3">
+                  {item.badge.includes('Hot') ? '🔥' : 
+                   item.badge.includes('% Off') ? '💰' :
+                   item.badge.includes('Limited') ? '⏳' :
+                   item.badge.includes('Save') ? '💵' :
+                   item.badge.includes('Bonus') ? '🎁' : '🏷️'}
+                </div>
+                
+                <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-2 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">
+                  {item.name}
                 </h4>
-                <div className="space-y-1">
-                  {hotDeals.slice(0, 3).map((deal, idx) => (
-                    <Link
-                      key={idx}
-                      href={deal.href}
-                      className="block text-xs hover:text-primary transition-colors"
-                    >
-                      {deal.name}
-                    </Link>
-                  ))}
+                
+                {item.description && (
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                    {item.description}
+                  </p>
+                )}
+
+                {item.discount && (
+                  <div className="mt-auto">
+                    <div className="inline-block px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-sm font-bold rounded-lg">
+                      {item.discount}
+                    </div>
+                  </div>
+                )}
+
+                {/* Hover indicator */}
+                <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <svg
+                    className="w-5 h-5 text-red-600 dark:text-red-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M14 5l7 7m0 0l-7 7m7-7H3"
+                    />
+                  </svg>
                 </div>
               </div>
-            )}
-
-            {/* Clearance & Sales */}
-            {salesOffers.length > 0 && (
-              <div>
-                <h4 className="font-medium text-sm mb-2 flex items-center gap-1">
-                  <span className="text-green-500">💰</span> Clearance
-                </h4>
-                <div className="space-y-1">
-                  {salesOffers.slice(0, 3).map((sale, idx) => (
-                    <Link
-                      key={idx}
-                      href={sale.href}
-                      className="block text-xs hover:text-primary transition-colors"
-                    >
-                      {sale.name}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Special Offers */}
-            {specialOffers.length > 0 && (
-              <div>
-                <h4 className="font-medium text-sm mb-2 flex items-center gap-1">
-                  <span className="text-purple-500">✨</span> Special
-                </h4>
-                <div className="space-y-1">
-                  {specialOffers.slice(0, 3).map((special, idx) => (
-                    <Link
-                      key={idx}
-                      href={special.href}
-                      className="block text-xs hover:text-primary transition-colors"
-                    >
-                      {special.name}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Quick Links */}
-          <div className="mt-4 flex items-center justify-between text-xs text-base-content/60 pt-2">
-            <div className="flex gap-4">
-              <Link href="/offers/todays-deals" className="hover:text-primary">Today's Best Deals</Link>
-              <Link href="/offers/clearance" className="hover:text-primary">Clearance Zone</Link>
-              <Link href="/offers/flash-sales" className="hover:text-primary">Flash Sales</Link>
-            </div>
-            <span className="text-primary">Ends soon ⏰</span>
-          </div>
+            </Link>
+          ))}
         </div>
       </div>
     </div>

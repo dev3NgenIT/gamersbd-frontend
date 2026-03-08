@@ -1,9 +1,16 @@
 // components/EditorsPicks.tsx
 "use client";
-import { ChevronLeftIcon, ChevronRightIcon, HeartIcon, StarIcon } from "lucide-react";
-import React from "react";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  HeartIcon,
+  StarIcon,
+  ShoppingCartIcon,
+  EyeIcon,
+} from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
 
-// Sample editor's picks data based on your image
+// Sample editor's picks data
 const editorPicks = [
   {
     id: 1,
@@ -12,9 +19,12 @@ const editorPicks = [
     price: 456,
     originalPrice: 760,
     discount: 40,
-    image: "https://images.unsplash.com/photo-1605901309584-818e25960a8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    bgColor: "bg-[#2A2A2A] dark:bg-white",
+    image:
+      "https://images.unsplash.com/photo-1605901309584-818e25960a8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     editorRating: 4.8,
+    reviews: 234,
+    badge: "Editor's Choice",
+    inStock: 15,
   },
   {
     id: 2,
@@ -23,9 +33,12 @@ const editorPicks = [
     price: 864,
     originalPrice: 1080,
     discount: 20,
-    image: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    bgColor: "bg-[#2A2A2A] dark:bg-white",
+    image:
+      "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     editorRating: 4.5,
+    reviews: 156,
+    badge: "Trending",
+    inStock: 8,
   },
   {
     id: 3,
@@ -34,9 +47,12 @@ const editorPicks = [
     price: 300,
     originalPrice: 500,
     discount: 40,
-    image: "https://images.unsplash.com/photo-1624206112918-f140f087f9b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    bgColor: "bg-[#2A2A2A] dark:bg-white",
+    image:
+      "https://images.unsplash.com/photo-1624206112918-f140f087f9b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     editorRating: 4.7,
+    reviews: 312,
+    badge: "Best Seller",
+    inStock: 23,
   },
   {
     id: 4,
@@ -45,9 +61,12 @@ const editorPicks = [
     price: 500,
     originalPrice: 650,
     discount: 23,
-    image: "https://images.unsplash.com/photo-1614251056216-f1d4b13507f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    bgColor: "bg-[#2A2A2A] dark:bg-white",
+    image:
+      "https://images.unsplash.com/photo-1614251056216-f1d4b13507f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     editorRating: 4.6,
+    reviews: 198,
+    badge: "Staff Pick",
+    inStock: 12,
   },
   {
     id: 5,
@@ -56,9 +75,12 @@ const editorPicks = [
     price: 540,
     originalPrice: 600,
     discount: 10,
-    image: "https://images.unsplash.com/photo-1627222784012-94ef2c4c81c8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    bgColor: "bg-[#2A2A2A] dark:bg-white",
+    image:
+      "https://images.unsplash.com/photo-1627222784012-94ef2c4c81c8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     editorRating: 4.4,
+    reviews: 89,
+    badge: "Popular",
+    inStock: 5,
   },
   {
     id: 6,
@@ -67,9 +89,12 @@ const editorPicks = [
     price: 730,
     originalPrice: 912,
     discount: 20,
-    image: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    bgColor: "bg-[#2A2A2A] dark:bg-white",
+    image:
+      "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     editorRating: 4.9,
+    reviews: 445,
+    badge: "Top Rated",
+    inStock: 18,
   },
   {
     id: 7,
@@ -78,38 +103,76 @@ const editorPicks = [
     price: 470,
     originalPrice: 670,
     discount: 30,
-    image: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    bgColor: "bg-[#2A2A2A] dark:bg-white",
+    image:
+      "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     editorRating: 4.5,
+    reviews: 167,
+    badge: "Limited Edition",
+    inStock: 3,
   },
 ];
 
 const EditorsPicks = () => {
-  const [currentIndex, setCurrentIndex] = React.useState(0);
-  const [isHovered, setIsHovered] = React.useState(false);
-  const [favorites, setFavorites] = React.useState<number[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [favorites, setFavorites] = useState<number[]>([]);
+  const [itemsToShow, setItemsToShow] = useState(4);
+  const [imagesLoaded, setImagesLoaded] = useState<{ [key: number]: boolean }>(
+    {},
+  );
+  const [imageErrors, setImageErrors] = useState<{ [key: number]: boolean }>(
+    {},
+  );
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+  const [activeFilter, setActiveFilter] = useState("all");
+  const [showQuickView, setShowQuickView] = useState<number | null>(null);
+  const sliderRef = useRef<HTMLDivElement>(null);
 
-  const itemsPerView = {
-    mobile: 1,
-    tablet: 2,
-    desktop: 4,
+  // Filter options
+  const filters = [
+    { id: "all", label: "All Picks" },
+    { id: "trending", label: "Trending" },
+    { id: "bestseller", label: "Best Seller" },
+    { id: "limited", label: "Limited" },
+  ];
+
+  // Filter products based on active filter
+  const getFilteredProducts = () => {
+    if (activeFilter === "all") return editorPicks;
+    if (activeFilter === "trending")
+      return editorPicks.filter(
+        (p) => p.badge === "Trending" || p.badge === "Popular",
+      );
+    if (activeFilter === "bestseller")
+      return editorPicks.filter(
+        (p) => p.badge === "Best Seller" || p.badge === "Top Rated",
+      );
+    if (activeFilter === "limited")
+      return editorPicks.filter((p) => p.inStock < 10);
+    return editorPicks;
   };
 
-  const [itemsToShow, setItemsToShow] = React.useState(4);
+  const filteredProducts = getFilteredProducts();
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) setItemsToShow(4);
       else if (window.innerWidth >= 768) setItemsToShow(2);
       else setItemsToShow(1);
     };
-    
+
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const maxIndex = Math.max(0, editorPicks.length - itemsToShow);
+  const maxIndex = Math.max(0, filteredProducts.length - itemsToShow);
+
+  useEffect(() => {
+    if (currentIndex > maxIndex) {
+      setCurrentIndex(maxIndex);
+    }
+  }, [currentIndex, maxIndex, filteredProducts.length]);
 
   const nextSlide = () => {
     setCurrentIndex((prev) => Math.min(prev + 1, maxIndex));
@@ -119,135 +182,238 @@ const EditorsPicks = () => {
     setCurrentIndex((prev) => Math.max(prev - 1, 0));
   };
 
-  const toggleFavorite = (id: number) => {
+  const toggleFavorite = (id: number, e: React.MouseEvent) => {
+    e.stopPropagation();
     setFavorites((prev) =>
-      prev.includes(id) ? prev.filter((fav) => fav !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((fav) => fav !== id) : [...prev, id],
     );
+  };
+
+  const handleImageLoad = (productId: number) => {
+    setImagesLoaded((prev) => ({ ...prev, [productId]: true }));
+  };
+
+  const handleImageError = (productId: number) => {
+    setImageErrors((prev) => ({ ...prev, [productId]: true }));
+    setImagesLoaded((prev) => ({ ...prev, [productId]: true })); // Mark as loaded to hide spinner
+  };
+
+  const calculateDiscount = (price: number, originalPrice: number) => {
+    return Math.round(((originalPrice - price) / originalPrice) * 100);
+  };
+
+  // Touch handlers for mobile swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStart - touchEnd > 75) {
+      nextSlide();
+    }
+    if (touchStart - touchEnd < -75) {
+      prevSlide();
+    }
   };
 
   return (
     <section className="py-16 bg-[#1a1a1a] dark:bg-white transition-colors duration-300">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-10">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-400 rounded-2xl flex items-center justify-center">
-              <StarIcon className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-white dark:text-black">
-                Editor's Picks
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400 mt-1">
-                Curated just for you by our team
-              </p>
-            </div>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-10">
+          <div>
+            <h2 className="text-3xl md:text-4xl font-bold text-white dark:text-black">
+              Editor's Picks
+            </h2>
+            <p className="text-gray-400 dark:text-gray-600 mt-1">
+              Curated just for you by our team
+            </p>
           </div>
 
-          {/* Discount Badge */}
-          <div className="hidden lg:flex items-center gap-2 bg-gradient-to-r from-red-500 to-orange-500 text-white px-6 py-3 rounded-full">
-            <span className="text-2xl font-black">UP TO</span>
-            <span className="text-4xl font-black">-40%</span>
+          {/* Filter Tags */}
+          <div className="flex flex-wrap gap-2">
+            {filters.map((filter) => (
+              <button
+                key={filter.id}
+                onClick={() => {
+                  setActiveFilter(filter.id);
+                  setCurrentIndex(0);
+                }}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                  activeFilter === filter.id
+                    ? "bg-blue-600 text-white shadow-lg shadow-blue-600/25"
+                    : "bg-gray-800 dark:bg-gray-200 text-gray-300 dark:text-gray-700 hover:bg-gray-700 dark:hover:bg-gray-300"
+                }`}
+              >
+                {filter.label}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* Mobile Discount Badge */}
-        <div className="lg:hidden flex justify-center mb-6">
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-red-500 to-orange-500 text-white px-4 py-2 rounded-full">
-            <span className="text-lg font-bold">UP TO</span>
-            <span className="text-2xl font-black">-40%</span>
-          </div>
-        </div>
-
-        {/* Slider Container */}
-        <div 
-          className="relative group"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
+        {/* Slider */}
+        <div
+          ref={sliderRef}
+          className="relative"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
-          <div className="overflow-hidden">
+          <div className="overflow-hidden rounded-xl">
             <div
-              className="flex transition-transform bg-[#1a1a1a] dark:bg-white duration-500 ease-out gap-6"
+              className="flex transition-transform duration-500 ease-out gap-6"
               style={{
                 transform: `translateX(-${currentIndex * (100 / itemsToShow)}%)`,
               }}
             >
-              {editorPicks.map((item) => (
+              {filteredProducts.map((product) => (
                 <div
-                  key={item.id}
-                  className="flex-shrink-0 w-full md:w-[calc(50%-12px)] lg:w-[calc(25%-18px)]"
+                  key={product.id}
+                  className="flex-shrink-0 w-full"
                   style={{
-                    flexBasis: `calc(${100 / itemsToShow}% - ${itemsToShow > 1 ? 24 : 0}px)`,
+                    flexBasis: `calc(${100 / itemsToShow}% - ${
+                      itemsToShow > 1
+                        ? (24 * (itemsToShow - 1)) / itemsToShow
+                        : 0
+                    }px)`,
                   }}
                 >
-                  <div className="group/card relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
+                  <div className="group relative bg-[#2A2A2A] dark:bg-gray-50 rounded-xl overflow-hidden border border-gray-800 dark:border-gray-200 hover:border-gray-700 dark:hover:border-gray-300 transition-all">
+                    {/* Badge */}
+                    <div className="absolute top-3 left-3 z-20">
+                      <span
+                        className={`px-2 py-1 text-xs font-bold rounded-full ${
+                          product.badge === "Editor's Choice"
+                            ? "bg-purple-500 text-white"
+                            : product.badge === "Trending"
+                              ? "bg-blue-500 text-white"
+                              : product.badge === "Best Seller"
+                                ? "bg-green-500 text-white"
+                                : product.badge === "Top Rated"
+                                  ? "bg-amber-500 text-white"
+                                  : "bg-orange-500 text-white"
+                        }`}
+                      >
+                        {product.badge}
+                      </span>
+                    </div>
+
                     {/* Favorite Button */}
                     <button
-                      onClick={() => toggleFavorite(item.id)}
-                      className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:scale-110 transition-transform"
+                      onClick={(e) => toggleFavorite(product.id, e)}
+                      className="absolute top-3 right-3 z-20 w-8 h-8 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-black/70 transition-colors"
                     >
                       <HeartIcon
-                        className={`w-5 h-5 ${
-                          favorites.includes(item.id)
-                            ? "text-red-500 fill-red-500"
-                            : "text-gray-400 dark:text-gray-500"
+                        className={`w-4 h-4 ${
+                          favorites.includes(product.id)
+                            ? "fill-red-500 text-red-500"
+                            : "text-white"
                         }`}
                       />
                     </button>
 
-                    {/* Discount Badge */}
-                    <div className="absolute top-4 left-4 z-10 bg-gradient-to-r from-red-500 to-orange-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                      -{item.discount}%
-                    </div>
+                    {/* Quick View Button */}
+                    <button
+                      onClick={() => setShowQuickView(product.id)}
+                      className="absolute top-3 right-14 z-20 w-8 h-8 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-black/70 transition-colors opacity-0 group-hover:opacity-100"
+                    >
+                      <EyeIcon className="w-4 h-4 text-white" />
+                    </button>
 
                     {/* Image Container */}
-                    <div className={`${item.bgColor} aspect-square p-6 relative overflow-hidden`}>
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="w-full h-full object-contain transform group-hover/card:scale-110 transition-transform duration-500"
-                      />
-                      
-                      {/* Editor's Choice Badge */}
-                      <div className="absolute bottom-4 left-4 bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1">
-                        <StarIcon className="w-3 h-3 fill-current" />
-                        <span>Editor's Pick</span>
-                      </div>
+                    <div className="relative w-full aspect-square overflow-hidden bg-gray-800 dark:bg-gray-200">
+                      {/* Loading Spinner */}
+                      {!imagesLoaded[product.id] && !imageErrors[product.id] && (
+                        <div className="absolute inset-0 flex items-center justify-center z-10 bg-gray-800 dark:bg-gray-200">
+                          <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+                        </div>
+                      )}
 
-                      {/* Rating */}
-                      <div className="absolute bottom-4 right-4 bg-black/70 dark:bg-white/90 text-white dark:text-black px-2 py-1 rounded-lg text-sm font-bold">
-                        ★ {item.editorRating}
-                      </div>
+                      {/* Error Fallback */}
+                      {imageErrors[product.id] && (
+                        <div className="absolute inset-0 flex items-center justify-center z-10 bg-gray-800 dark:bg-gray-200">
+                          <div className="text-center">
+                            <div className="text-gray-400 text-xs">
+                              Failed to load
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className={`absolute inset-0 w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ${
+                          imagesLoaded[product.id] && !imageErrors[product.id]
+                            ? "opacity-100"
+                            : "opacity-0"
+                        }`}
+                        onLoad={() => handleImageLoad(product.id)}
+                        onError={() => handleImageError(product.id)}
+                        loading="lazy"
+                      />
+
+                      {/* Discount Badge - Show only if image loaded successfully */}
+                      {imagesLoaded[product.id] && !imageErrors[product.id] && (
+                        <div className="absolute bottom-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-20">
+                          -
+                          {calculateDiscount(
+                            product.price,
+                            product.originalPrice,
+                          )}
+                          %
+                        </div>
+                      )}
+
+                      {/* Stock Badge - Show only if image loaded successfully */}
+                      {imagesLoaded[product.id] &&
+                        !imageErrors[product.id] &&
+                        product.inStock < 5 && (
+                          <div className="absolute bottom-3 right-3 bg-red-500/90 text-white text-xs px-2 py-1 rounded-full z-20">
+                            Only {product.inStock} left
+                          </div>
+                        )}
                     </div>
 
                     {/* Product Info */}
-                    <div className="p-4 bg-[#2a2a2a] dark:bg-white">
-                      <p className="text-sm text-white dark:text-black mb-1">
-                        {item.category}
-                      </p>
-                      <h3 className="text-lg font-semibold text-white dark:text-black mb-2">
-                        {item.name}
+                    <div className="p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-xs text-gray-400 dark:text-gray-600">
+                          {product.category}
+                        </p>
+                        <div className="flex items-center gap-1">
+                          <StarIcon className="w-3 h-3 fill-yellow-500 text-yellow-500" />
+                          <span className="text-xs text-white dark:text-black font-medium">
+                            {product.editorRating}
+                          </span>
+                          <span className="text-xs text-gray-400 dark:text-gray-600">
+                            ({product.reviews})
+                          </span>
+                        </div>
+                      </div>
+
+                      <h3 className="text-lg font-semibold text-white dark:text-black mb-2 line-clamp-1">
+                        {product.name}
                       </h3>
-                      
-                      {/* Price */}
-                      <div className="flex items-baseline gap-2 mb-3">
-                        <span className="text-2xl font-bold text-white dark:text-black">
-                          ${item.price}
+
+                      <div className="flex items-center gap-2 mb-4">
+                        <span className="text-xl font-bold text-white dark:text-black">
+                          ${product.price}
                         </span>
-                        <span className="text-sm text-gray-400 dark:text-gray-500 line-through">
-                          ${item.originalPrice}
+                        <span className="text-sm text-gray-400 dark:text-gray-600 line-through">
+                          ${product.originalPrice}
                         </span>
                       </div>
 
-                      {/* Quick Actions */}
-                      <div className="flex gap-2">
-                        <button className="flex-1 px-4 py-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg font-medium text-sm hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors">
-                          Add to Cart
-                        </button>
-                        <button className="px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-white dark:text-black hover:text-red-500 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                          Quick View
-                        </button>
-                      </div>
+                      {/* Add to Cart Button */}
+                      <button className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium flex items-center justify-center gap-2 transition-colors">
+                        <ShoppingCartIcon className="w-4 h-4" />
+                        Add to Cart
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -259,57 +425,72 @@ const EditorsPicks = () => {
           {currentIndex > 0 && (
             <button
               onClick={prevSlide}
-              className="absolute -left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white dark:bg-gray-800 rounded-full shadow-lg flex items-center justify-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all opacity-0 group-hover:opacity-100"
+              className="absolute -left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white dark:bg-gray-800 rounded-full shadow-lg flex items-center justify-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all opacity-0 group-hover:opacity-100"
+              aria-label="Previous slide"
             >
-              <ChevronLeftIcon className="w-6 h-6" />
+              <ChevronLeftIcon className="w-5 h-5" />
             </button>
           )}
-          
+
           {currentIndex < maxIndex && (
             <button
               onClick={nextSlide}
-              className="absolute -right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white dark:bg-gray-800 rounded-full shadow-lg flex items-center justify-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all opacity-0 group-hover:opacity-100"
+              className="absolute -right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white dark:bg-gray-800 rounded-full shadow-lg flex items-center justify-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all opacity-0 group-hover:opacity-100"
+              aria-label="Next slide"
             >
-              <ChevronRightIcon className="w-6 h-6" />
+              <ChevronRightIcon className="w-5 h-5" />
             </button>
           )}
         </div>
 
-        {/* Progress Indicators */}
-        <div className="mt-8 flex items-center justify-center gap-2">
+        {/* Progress Dots */}
+        <div className="flex justify-center gap-2 mt-8">
           {Array.from({ length: maxIndex + 1 }).map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentIndex(index)}
               className={`transition-all ${
                 index === currentIndex
-                  ? "w-8 h-2 bg-blue-600 dark:bg-blue-500 rounded-full"
-                  : "w-2 h-2 bg-gray-300 dark:bg-gray-700 rounded-full hover:bg-gray-400 dark:hover:bg-gray-600"
+                  ? "w-8 h-2 bg-blue-600 rounded-full"
+                  : "w-2 h-2 bg-gray-600 dark:bg-gray-400 rounded-full hover:bg-gray-500 dark:hover:bg-gray-500"
               }`}
+              aria-label={`Go to slide ${index + 1}`}
             />
           ))}
         </div>
 
-        {/* Stats Banner */}
-        <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-xl p-4 text-center">
-            <span className="text-2xl font-black text-purple-600 dark:text-purple-400">-1%</span>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Daily Deal</p>
-          </div>
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 text-center">
-            <span className="text-2xl font-black text-blue-600 dark:text-blue-400">40%</span>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Editor's Choice</p>
-          </div>
-          <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-xl p-4 text-center">
-            <span className="text-2xl font-black text-green-600 dark:text-green-400">24</span>
-            <p className="text-sm text-gray-600 dark:text-gray-400">New Arrivals</p>
-          </div>
-          <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 rounded-xl p-4 text-center">
-            <span className="text-2xl font-black text-orange-600 dark:text-orange-400">4.8</span>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Avg Rating</p>
-          </div>
+        {/* View All Link */}
+        <div className="text-center mt-8">
+          <button className="inline-flex items-center gap-1 text-gray-400 dark:text-gray-600 hover:text-white dark:hover:text-black transition-colors group">
+            <span>View All Editor's Picks</span>
+            <ChevronRightIcon className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </button>
         </div>
       </div>
+
+      {/* Quick View Modal */}
+      {showQuickView && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+          <div className="bg-[#2A2A2A] dark:bg-white rounded-xl max-w-lg w-full">
+            <div className="p-6">
+              <div className="flex justify-between items-start mb-4">
+                <h3 className="text-xl font-bold text-white dark:text-black">
+                  Quick View
+                </h3>
+                <button
+                  onClick={() => setShowQuickView(null)}
+                  className="w-8 h-8 rounded-full bg-gray-800 dark:bg-gray-200 flex items-center justify-center hover:bg-gray-700 dark:hover:bg-gray-300 transition-colors"
+                >
+                  <span className="text-white dark:text-black">✕</span>
+                </button>
+              </div>
+              <p className="text-gray-400 dark:text-gray-600">
+                Product details will appear here...
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

@@ -46,7 +46,7 @@ const MobileMenu = ({
       className="lg:hidden bg-base-100 shadow-sm border-t border-base-200 max-h-[80vh] overflow-y-auto"
       style={{ zIndex: 98 }}
     >
-      <div className="container mx-auto">
+      <div className="max-w-7xl mx-auto">
         <div className="p-4 space-y-4">
           {/* Mobile Categories */}
           <div>

@@ -4,10 +4,10 @@ import Link from "next/link";
 
 const TopBar = () => {
   return (
-    <div className="bg-gray-900 dark:bg-gray-100 text-gray-100 dark:text-gray-900 border-b border-gray-800 dark:border-gray-200">
-      <div className="container mx-auto py-2 px-4 sm:px-6 flex flex-wrap items-center justify-between font-sans text-[13px] tracking-wide">
+    <div className="bg-[#2a2a2a] dark:bg-gray-100 text-gray-100 dark:text-gray-900 border-b border-gray-800 dark:border-gray-200">
+      <div className="max-w-7xl mx-auto py-2 px-0 flex flex-wrap items-center justify-between font-sans text-[13px] tracking-wide">
         {/* Left Side: Navigation Links */}
-        <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
+        <div className="flex items-center gap-3 sm:gap-4 flex-wrap font-lato">
           <Link
             href="/store"
             className="hover:text-[#e87831] dark:hover:text-[#e87831] transition-colors uppercase font-medium"

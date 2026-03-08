@@ -1,105 +1,105 @@
-// components/GamesAchivement.tsx
+// components/RecentUploads.tsx
 "use client";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   HeartIcon,
-  StarIcon,
   ShoppingCartIcon,
+  ClockIcon,
 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 
-// Sample editor's picks data based on your image
-const gamesAchivement = [
+// Sample recent uploads data
+const recentUploads = [
   {
     id: 1,
-    name: "SIFU",
-    category: "Action Game",
-    price: 456,
-    originalPrice: 760,
-    discount: 40,
+    name: "Cyberpunk 2077",
+    category: "Action RPG",
+    price: 1299,
+    originalPrice: 1599,
+    discount: 20,
     image:
-      "https://images.unsplash.com/photo-1605901309584-818e25960a8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    editorRating: 4.8,
+      "https://gamersbd.com/wp-content/uploads/2016/01/egs-cyberpunk2077-cdprojektred-g1a-13-02-24-22-1920x1080-dd4dcc601c17-300x375.jpg",
+    uploadDate: "2 hours ago",
   },
   {
     id: 2,
-    name: "Baseball Cap",
-    category: "Accessories",
-    price: 864,
-    originalPrice: 1080,
-    discount: 20,
+    name: "Final Fantasy VII",
+    category: "RPG",
+    price: 1799,
+    originalPrice: 2199,
+    discount: 18,
     image:
-      "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    editorRating: 4.5,
+      "https://gamersbd.com/wp-content/uploads/2015/12/egs-finalfantasyviiremakeintergrade-squareenix-g1a-01-1920x1080-05bc7f9ce725-300x375.jpg",
+    uploadDate: "5 hours ago",
   },
   {
     id: 3,
-    name: "Block Blouse",
-    category: "Contemporary",
-    price: 300,
-    originalPrice: 500,
-    discount: 40,
+    name: "SIFU",
+    category: "Fighting",
+    price: 899,
+    originalPrice: 1199,
+    discount: 25,
     image:
-      "https://images.unsplash.com/photo-1624206112918-f140f087f9b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    editorRating: 4.7,
+      "https://gamersbd.com/wp-content/uploads/2015/12/egs-sifustandardedition-sloclap-g1a-06-1920x1080-b45863e5563b-300x375.jpg",
+    uploadDate: "1 day ago",
   },
   {
     id: 4,
-    name: "Daiki Blouse",
-    category: "Contemporary",
-    price: 500,
-    originalPrice: 650,
-    discount: 23,
+    name: "Elden Ring",
+    category: "Action RPG",
+    price: 1999,
+    originalPrice: 2499,
+    discount: 20,
     image:
-      "https://images.unsplash.com/photo-1614251056216-f1d4b13507f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    editorRating: 4.6,
+      "https://gamersbd.com/wp-content/uploads/2022/06/b4dc4-24-2-300x375.jpg",
+    uploadDate: "2 days ago",
   },
   {
     id: 5,
-    name: "Billfold Wallet",
-    category: "Accessories",
-    price: 540,
-    originalPrice: 600,
-    discount: 10,
+    name: "God of War",
+    category: "Action",
+    price: 1499,
+    originalPrice: 1899,
+    discount: 21,
     image:
-      "https://images.unsplash.com/photo-1627222784012-94ef2c4c81c8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    editorRating: 4.4,
+      "https://gamersbd.com/wp-content/uploads/2016/03/egs-cyberpunk2077-cdprojektred-g1a-03-1920x1080-c25ac94167df-300x375.jpg",
+    uploadDate: "3 days ago",
   },
   {
     id: 6,
-    name: "Crochet Cardigan",
-    category: "Contemporary",
-    price: 730,
-    originalPrice: 912,
-    discount: 20,
+    name: "Spider-Man 2",
+    category: "Action Adventure",
+    price: 2199,
+    originalPrice: 2599,
+    discount: 15,
     image:
-      "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    editorRating: 4.9,
+      "https://gamersbd.com/wp-content/uploads/2016/01/egs-cyberpunk2077-cdprojektred-g1a-13-02-24-22-1920x1080-dd4dcc601c17-300x375.jpg",
+    uploadDate: "4 days ago",
   },
   {
     id: 7,
-    name: "Dress",
-    category: "Contemporary",
-    price: 470,
-    originalPrice: 670,
-    discount: 30,
+    name: "The Last of Us",
+    category: "Survival",
+    price: 1699,
+    originalPrice: 1999,
+    discount: 15,
     image:
-      "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    editorRating: 4.5,
+      "https://gamersbd.com/wp-content/uploads/2015/12/egs-finalfantasyviiremakeintergrade-squareenix-g1a-01-1920x1080-05bc7f9ce725-300x375.jpg",
+    uploadDate: "5 days ago",
   },
 ];
 
-const GamesAchivement = () => {
+const RecentUploads = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [imagesLoaded, setImagesLoaded] = useState<{ [key: number]: boolean }>(
     {},
   );
+  const [itemsToShow, setItemsToShow] = useState(4);
   const [imageErrors, setImageErrors] = useState<{ [key: number]: boolean }>(
     {},
   );
-  const [itemsToShow, setItemsToShow] = useState(4);
 
   useEffect(() => {
     const handleResize = () => {
@@ -113,7 +113,7 @@ const GamesAchivement = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const maxIndex = Math.max(0, gamesAchivement.length - itemsToShow);
+  const maxIndex = Math.max(0, recentUploads.length - itemsToShow);
 
   const nextSlide = () => {
     setCurrentIndex((prev) => Math.min(prev + 1, maxIndex));
@@ -149,11 +149,16 @@ const GamesAchivement = () => {
         {/* Header */}
         <div className="flex items-center justify-between mb-10">
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold text-white dark:text-black">
-              Games with Achievements
-            </h2>
-            <p className="text-gray-400 dark:text-gray-600 mt-2">
-              Curated just for you by our team
+            <div className="flex items-center gap-3 mb-2">
+              <h2 className="text-3xl md:text-4xl font-bold text-white dark:text-black">
+                Recent Uploads
+              </h2>
+              <span className="px-3 py-1 bg-[#d88616] text-white text-xs font-bold rounded-full animate-pulse">
+                NEW
+              </span>
+            </div>
+            <p className="text-gray-400 dark:text-gray-600">
+              Freshly added games and products
             </p>
           </div>
 
@@ -195,7 +200,7 @@ const GamesAchivement = () => {
                 transform: `translateX(-${currentIndex * (100 / itemsToShow)}%)`,
               }}
             >
-              {gamesAchivement.map((item) => (
+              {recentUploads.map((item) => (
                 <div
                   key={item.id}
                   className="flex-shrink-0 w-full"
@@ -206,7 +211,7 @@ const GamesAchivement = () => {
                   }}
                 >
                   <div className="relative group/card overflow-hidden rounded-2xl transition-all duration-300">
-                    {/* Product Image with Background Color */}
+                    {/* Product Image */}
                     <div className="relative w-full aspect-square overflow-hidden rounded-2xl bg-gray-800 dark:bg-gray-200">
                       {/* Loading Spinner */}
                       {!imagesLoaded[item.id] && !imageErrors[item.id] && (
@@ -226,6 +231,7 @@ const GamesAchivement = () => {
                         </div>
                       )}
 
+                      {/* Image */}
                       <img
                         src={item.image}
                         alt={item.name}
@@ -246,13 +252,20 @@ const GamesAchivement = () => {
                         </div>
                       )}
 
-                      {/* Rating Badge - Show only if image loaded successfully */}
+                      {/* Upload Time Badge - Show only if image loaded successfully */}
                       {imagesLoaded[item.id] && !imageErrors[item.id] && (
                         <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1 z-20">
-                          <StarIcon className="w-3 h-3 fill-yellow-500 text-yellow-500" />
-                          <span>{item.editorRating}</span>
+                          <ClockIcon className="w-3 h-3" />
+                          <span>{item.uploadDate}</span>
                         </div>
                       )}
+
+                      {/* New Arrival Overlay for very recent items */}
+                      {imagesLoaded[item.id] &&
+                        !imageErrors[item.id] &&
+                        item.uploadDate.includes("hour") && (
+                          <div className="absolute inset-0 border-2 border-[#d88616] rounded-2xl pointer-events-none z-20" />
+                        )}
                     </div>
 
                     {/* Product Info */}
@@ -329,9 +342,10 @@ const GamesAchivement = () => {
         <div className="mt-8 flex justify-center">
           <div className="w-48 h-1 bg-gray-800 dark:bg-gray-200 rounded-full overflow-hidden">
             <div
-              className="h-full bg-blue-600 dark:bg-blue-500 rounded-full transition-all duration-300"
+              className="h-full bg-[#d88616] dark:bg-[#d88616] rounded-full transition-all duration-300"
               style={{
-                width: maxIndex > 0 ? `${(currentIndex / maxIndex) * 100}%` : "0%",
+                width:
+                  maxIndex > 0 ? `${(currentIndex / maxIndex) * 100}%` : "0%",
               }}
             />
           </div>
@@ -341,4 +355,4 @@ const GamesAchivement = () => {
   );
 };
 
-export default GamesAchivement;
+export default RecentUploads;

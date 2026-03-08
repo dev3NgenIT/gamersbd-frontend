@@ -3,64 +3,73 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import React, { useState, useEffect } from "react";
 
-// Sample slider images
+// Sample slider images (same as before)
 const sliderImages = [
   {
     id: 1,
-    url: "https://images.unsplash.com/photo-1605901309584-818e25960a8f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1978&q=80",
+    url: "https://images.launchbox-app.com/r2_5bf5ccb5-275f-4aa3-8678-cb4281061976.jpg",
     alt: "Gaming Console",
-    title: "PlayStation 5",
-    subtitle: "Experience the next generation",
   },
   {
     id: 2,
-    url: "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80",
+    url: "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2021/06/call-of-duty-mobile-promo-banner.jpg",
     alt: "Gaming Accessories",
-    title: "Premium Accessories",
-    subtitle: "Level up your gaming experience",
   },
   {
     id: 3,
-    url: "https://images.unsplash.com/photo-1592155931584-901ac15763e3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2075&q=80",
+    url: "https://wdflat.com/wp-content/uploads/Battlefield-V.jpg",
     alt: "VR Gaming",
-    title: "Virtual Reality",
-    subtitle: "Immerse yourself in new worlds",
   },
 ];
 
-// Sample offers data based on your image
+// Redesigned offers with image + text + link pattern
 const offers = [
   {
     id: 1,
-    title: "OFFER SPECIAL",
-    subtitle: "Monthly Deals",
-    price: "$2.99",
-    bgColor: "bg-gradient-to-br from-purple-600 to-pink-600 dark:from-purple-500 dark:to-pink-500",
-    textColor: "text-white",
+    image:
+      "https://gamersbd.com/wp-content/uploads/2022/05/ezgif.com-gif-maker.jpg",
+    imageBg: "bg-purple-100 dark:bg-purple-900/30",
+    title: "Monthly Deals",
+    description: "DualSense Controller",
+    linkText: "Shop Now",
+    linkUrl: "#",
+    bgColor: "bg-[#2a2a2a] dark:bg-white",
+    textColor: "text-gray-900 dark:text-white",
   },
   {
     id: 2,
-    title: "SUPER COMBO",
-    subtitle: "COMBO Offer",
-    badge: "NEW",
-    bgColor: "bg-gradient-to-br from-blue-600 to-cyan-600 dark:from-blue-500 dark:to-cyan-500",
-    textColor: "text-white",
+    image:
+      "https://gamersbd.com/wp-content/uploads/2022/05/monthly-deals-design-templa.jpg",
+    imageBg: "bg-blue-100 dark:bg-blue-900/30",
+    title: "Combo Offers",
+    description: "7.1 Surround Sound",
+    linkText: "View Deals",
+    linkUrl: "#",
+    bgColor: "bg-[#2a2a2a] dark:bg-white",
+    textColor: "text-gray-900 dark:text-white",
   },
   {
     id: 3,
-    title: "FREE GAMES",
-    subtitle: "NOW!",
-    badge: "PREORDER",
-    bgColor: "bg-gradient-to-br from-orange-500 to-red-600 dark:from-orange-500 dark:to-red-500",
-    textColor: "text-white",
+    image:
+      "https://gamersbd.com/wp-content/uploads/2022/05/ccc2d0c2aedb4d4c1ef8a42a651.jpg",
+    imageBg: "bg-green-100 dark:bg-green-900/30",
+    title: "Free Offers",
+    description: "RGB Gaming",
+    linkText: "Learn More",
+    linkUrl: "#",
+    bgColor: "bg-[#2a2a2a] dark:bg-white",
+    textColor: "text-gray-900 dark:text-white",
   },
   {
     id: 4,
-    title: "Promo Code",
-    subtitle: "SAVE 20%",
-    code: "GAMER2024",
-    bgColor: "bg-gradient-to-br from-green-500 to-emerald-600 dark:from-green-500 dark:to-emerald-500",
-    textColor: "text-white",
+    image: "https://gamersbd.com/wp-content/uploads/2022/05/maxresdefault.jpg",
+    imageBg: "bg-orange-100 dark:bg-orange-900/30",
+    title: "Pre Orders",
+    description: "16000 DPI Sensor",
+    linkText: "Check Price",
+    linkUrl: "#",
+    bgColor: "bg-[#2a2a2a] dark:bg-white",
+    textColor: "text-gray-900 dark:text-white",
   },
 ];
 
@@ -87,188 +96,135 @@ const HeroSection = () => {
 
   return (
     <div className="bg-[#1a1a1a] dark:bg-white">
+      <div className="max-w-7xl mx-auto py-8 transition-colors duration-300">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Left Side - Slider (3/4 width) */}
+          <div className="lg:col-span-3 relative group">
+            <div className="relative h-[500px] rounded-2xl overflow-hidden shadow-2xl dark:shadow-gray-800/50">
+              {/* Images */}
+              {sliderImages.map((image, index) => (
+                <div
+                  key={image.id}
+                  className={`absolute inset-0 transition-transform duration-700 ease-in-out ${
+                    index === currentSlide
+                      ? "translate-x-0"
+                      : "translate-x-full"
+                  }`}
+                  style={{
+                    transform: `translateX(${(index - currentSlide) * 100}%)`,
+                  }}
+                >
+                  <img
+                    src={image.url}
+                    alt={image.alt}
+                    className="w-full h-full object-cover"
+                  />
+                  {/* Overlay - darker in dark mode */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent dark:from-black/90 dark:via-black/50" />
+                </div>
+              ))}
 
-    <div className="container mx-auto  py-8  transition-colors duration-300">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Side - Slider (2/3 width) */}
-        <div className="lg:col-span-2 relative group">
-          {/* Slider Container */}
-          <div className="relative h-[400px] md:h-[500px] rounded-2xl overflow-hidden shadow-2xl dark:shadow-gray-800/50">
-            {/* Images */}
-            {sliderImages.map((image, index) => (
-              <div
-                key={image.id}
-                className={`absolute inset-0 transition-transform duration-700 ease-in-out ${
-                  index === currentSlide ? "translate-x-0" : "translate-x-full"
-                }`}
-                style={{
-                  transform: `translateX(${(index - currentSlide) * 100}%)`,
-                }}
+              {/* Navigation Arrows */}
+              <button
+                onClick={prevSlide}
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-800 dark:text-gray-200 hover:bg-white dark:hover:bg-gray-700 transition-all opacity-0 group-hover:opacity-100"
               >
-                <img
-                  src={image.url}
-                  alt={image.alt}
-                  className="w-full h-full object-cover"
-                />
-                {/* Overlay - darker in dark mode */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent dark:from-black/90 dark:via-black/50" />
+                <ChevronLeftIcon className="w-6 h-6" />
+              </button>
+              <button
+                onClick={nextSlide}
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-800 dark:text-gray-200 hover:bg-white dark:hover:bg-gray-700 transition-all opacity-0 group-hover:opacity-100"
+              >
+                <ChevronRightIcon className="w-6 h-6" />
+              </button>
 
-                {/* Content */}
-                <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
-                  <h2 className="text-4xl md:text-5xl font-bold mb-2 animate-fade-in drop-shadow-lg">
-                    {image.title}
-                  </h2>
-                  <p className="text-xl md:text-2xl text-gray-200 dark:text-gray-300 mb-4 drop-shadow-md">
-                    {image.subtitle}
-                  </p>
-                  <button className="px-8 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 rounded-lg font-semibold transition-all transform hover:scale-105 shadow-lg hover:shadow-xl dark:shadow-blue-500/20">
-                    Shop Now
-                  </button>
+              {/* Dots Indicator */}
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                {sliderImages.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentSlide(index)}
+                    className={`transition-all ${
+                      index === currentSlide
+                        ? "w-8 bg-white dark:bg-blue-400"
+                        : "w-2 bg-white/50 dark:bg-gray-400/50 hover:bg-white/80 dark:hover:bg-gray-300/80"
+                    } h-2 rounded-full`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Side - Offers Grid with Image + Text + Link pattern */}
+          <div className="lg:col-span-1 grid grid-cols-1 gap-4">
+            {offers.map((offer) => (
+              <div
+                key={offer.id}
+                className={`${offer.bgColor} ${offer.textColor} rounded-xl shadow-lg dark:shadow-gray-800/50 overflow-hidden hover:shadow-xl transition-all duration-300 group`}
+              >
+                <div className="flex items-center p-4 bg-[#2a2a2a] dark:bg-gray-900/30">
+                  {/* Left side - Image/Icon */}
+                  <div
+                    className={`flex-shrink-0 w-16 h-16 ${offer.imageBg} rounded-xl flex items-center justify-center text-4xl mr-4 group-hover:scale-110 transition-transform duration-300`}
+                  >
+                    <img
+                      src={offer.image}
+                      alt={offer.title}
+                      className="w-full h-full rounded-xl object-cover"
+                    />
+                  </div>
+
+                  {/* Right side - Text and Link */}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg font-bold truncate text-white font-lato">
+                      {offer.title}
+                    </h3>
+                    <p className="text-sm text-gray-400 dark:text-gray-400 mb-2 truncate">
+                      {offer.description}
+                    </p>
+                    <a
+                      href={offer.linkUrl}
+                      className="inline-flex items-center text-sm font-semibold text-[#d88616] dark:text-blue-400 hover:text-[#d88616] dark:hover:text-blue-300 transition-colors"
+                    >
+                      {offer.linkText}
+                      <svg
+                        className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </a>
+                  </div>
                 </div>
               </div>
             ))}
-
-            {/* Navigation Arrows - dark mode friendly */}
-            <button
-              onClick={prevSlide}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-800 dark:text-gray-200 hover:bg-white dark:hover:bg-gray-700 transition-all opacity-0 group-hover:opacity-100"
-            >
-              <ChevronLeftIcon className="w-6 h-6" />
-            </button>
-            <button
-              onClick={nextSlide}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-800 dark:text-gray-200 hover:bg-white dark:hover:bg-gray-700 transition-all opacity-0 group-hover:opacity-100"
-            >
-              <ChevronRightIcon className="w-6 h-6" />
-            </button>
-
-            {/* Dots Indicator - dark mode friendly */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-              {sliderImages.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentSlide(index)}
-                  className={`transition-all ${
-                    index === currentSlide
-                      ? "w-8 bg-white dark:bg-blue-400"
-                      : "w-2 bg-white/50 dark:bg-gray-400/50 hover:bg-white/80 dark:hover:bg-gray-300/80"
-                  } h-2 rounded-full`}
-                />
-              ))}
-            </div>
           </div>
         </div>
 
-        {/* Right Side - Offers Grid (1/3 width) */}
-        <div className="lg:col-span-1 grid grid-cols-2 gap-4">
-          {/* Offer 1 - Special Deal */}
-          <div
-            className={`${offers[0].bgColor} ${offers[0].textColor} rounded-2xl p-6 shadow-lg dark:shadow-gray-800/50 transform hover:scale-105 transition-all duration-300 col-span-2`}
-          >
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-sm font-semibold tracking-wider text-white/90">
-                  {offers[0].title}
-                </p>
-                <h3 className="text-3xl font-bold mt-2 text-white">
-                  {offers[0].subtitle}
-                </h3>
-                <p className="text-4xl font-black mt-4 text-white">
-                  {offers[0].price}
-                </p>
-              </div>
-              <span className="px-3 py-1 bg-white/20 dark:bg-white/10 backdrop-blur-sm rounded-full text-sm font-semibold text-white">
-                DEALS
-              </span>
-            </div>
-          </div>
-
-          {/* Offer 2 - Super Combo */}
-          <div
-            className={`${offers[1].bgColor} ${offers[1].textColor} rounded-2xl p-6 shadow-lg dark:shadow-gray-800/50 transform hover:scale-105 transition-all duration-300`}
-          >
-            <div className="relative">
-              <span className="absolute -top-2 -right-2 px-2 py-1 bg-yellow-400 dark:bg-yellow-500 text-black dark:text-white text-xs font-bold rounded-full shadow-lg">
-                {offers[1].badge}
-              </span>
-              <p className="text-sm font-semibold tracking-wider text-white/90">
-                {offers[1].title}
-              </p>
-              <h3 className="text-xl font-bold mt-2 text-white">
-                {offers[1].subtitle}
-              </h3>
-              <div className="mt-4 text-2xl font-black text-white">🔥</div>
-            </div>
-          </div>
-
-          {/* Offer 3 - Free Games */}
-          <div
-            className={`${offers[2].bgColor} ${offers[2].textColor} rounded-2xl p-6 shadow-lg dark:shadow-gray-800/50 transform hover:scale-105 transition-all duration-300`}
-          >
-            <div className="relative">
-              <span className="absolute -top-2 -right-2 px-2 py-1 bg-purple-400 dark:bg-purple-500 text-white text-xs font-bold rounded-full shadow-lg">
-                {offers[2].badge}
-              </span>
-              <p className="text-sm font-semibold tracking-wider text-white/90">
-                {offers[2].title}
-              </p>
-              <h3 className="text-2xl font-bold mt-2 text-white">
-                {offers[2].subtitle}
-              </h3>
-              <div className="mt-4 flex -space-x-2">
-                <div className="w-8 h-8 bg-white/30 dark:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-sm text-white">
-                  🎮
-                </div>
-                <div className="w-8 h-8 bg-white/30 dark:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-sm text-white">
-                  🎲
-                </div>
-                <div className="w-8 h-8 bg-white/30 dark:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-sm text-white">
-                  🎯
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Offer 4 - Promo Code */}
-          <div
-            className={`${offers[3].bgColor} ${offers[3].textColor} rounded-2xl p-6 shadow-lg dark:shadow-gray-800/50 transform hover:scale-105 transition-all duration-300 col-span-2`}
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-semibold tracking-wider text-white/90">
-                  {offers[3].title}
-                </p>
-                <h3 className="text-2xl font-bold mt-1 text-white">
-                  {offers[3].subtitle}
-                </h3>
-              </div>
-              <div className="bg-white/20 dark:bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/20 dark:border-white/10">
-                <code className="text-lg font-mono font-bold text-white">
-                  {offers[3].code}
-                </code>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Add custom animation for fade-in */}
+        <style jsx>{`
+          @keyframes fade-in {
+            from {
+              opacity: 0;
+              transform: translateY(20px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          .animate-fade-in {
+            animation: fade-in 0.8s ease-out;
+          }
+        `}</style>
       </div>
-
-      {/* Add custom animation for fade-in */}
-      <style jsx>{`
-        @keyframes fade-in {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .animate-fade-in {
-          animation: fade-in 0.8s ease-out;
-        }
-      `}</style>
-    </div>
     </div>
   );
 };
