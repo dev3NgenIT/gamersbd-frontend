@@ -2,6 +2,44 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+interface NavLinkProps {
+  href: string;
+  children: React.ReactNode;
+  className?: string;
+  isActive?: boolean;
+}
+
+const NavLink = ({
+  href,
+  children,
+  className = "",
+  isActive,
+}: NavLinkProps) => {
+  const pathname = usePathname();
+  const active = isActive !== undefined ? isActive : pathname === href;
+
+  return (
+    <Link
+      href={href}
+      className={`relative font-normal font-lato transition-colors duration-300 cursor-pointer rounded-none
+      focus:bg-transparent active:bg-transparent focus:outline-none
+      ${
+        active
+          ? "text-[#d88616] focus:text-[#d88616]"
+          : "text-white dark:text-gray-900 hover:text-[#d88616] focus:text-[#d88616]"
+      }
+      after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-full
+      after:bg-gradient-to-r after:from-transparent after:via-[#d88616] after:to-transparent
+      after:origin-center after:transition-transform after:duration-300
+      ${active ? "after:scale-x-100" : "after:scale-x-0 hover:after:scale-x-100"}
+      ${className}`}
+    >
+      {children}
+    </Link>
+  );
+};
 
 interface DesktopNavProps {
   activeDropdown: string | null;
@@ -15,12 +53,16 @@ const DesktopNav = ({
   onMouseLeave,
 }: DesktopNavProps) => {
   const navItems = [
-    { id: "specialized", label: "SPECIALIZED" },
-    { id: "offers", label: "OFFERS" },
+    { id: "specialized", label: "SPECIALIZED", href: "/specialized" },
+    { id: "offers", label: "OFFERS", href: "/offers" },
   ];
 
   return (
-    <ul className="menu menu-horizontal px-1">
+    <ul className="menu menu-horizontal px-1 [&>li>a]:rounded-none">
+      <li>
+        <NavLink href="/shop">SHOP</NavLink>
+      </li>
+
       {navItems.map((item) => (
         <li
           key={item.id}
@@ -28,10 +70,7 @@ const DesktopNav = ({
           onMouseEnter={() => onMouseEnter(item.id)}
           onMouseLeave={onMouseLeave}
         >
-          <Link
-            href="#"
-            className="font-medium font-lato text-white dark:text-gray-900 transition-colors cursor-pointer flex items-center"
-          >
+          <NavLink href={item.href} className="flex items-center">
             {item.label}
             <svg
               className={`w-4 h-4 ml-1 transition-transform duration-200 ${
@@ -48,24 +87,16 @@ const DesktopNav = ({
                 d="M19 9l-7 7-7-7"
               />
             </svg>
-          </Link>
+          </NavLink>
         </li>
       ))}
+
       <li>
-        <Link
-          href="/contact-us"
-          className="font-medium font-lato text-white dark:text-gray-900 transition-colors cursor-pointer"
-        >
-          CONTACT
-        </Link>
+        <NavLink href="/contact">CONTACT</NavLink>
       </li>
+
       <li>
-        <Link
-          href="/contact-us"
-          className="font-medium font-lato text-white dark:text-gray-900 transition-colors cursor-pointer"
-        >
-          NEWS
-        </Link>
+        <NavLink href="/news">NEWS</NavLink>
       </li>
     </ul>
   );

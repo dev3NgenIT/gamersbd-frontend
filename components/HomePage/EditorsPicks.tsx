@@ -258,12 +258,9 @@ const EditorsPicks = () => {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-10">
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold text-white dark:text-black">
+            <h2 className="text-3xl md:text-4xl text-white dark:text-black">
               Editor's Picks
             </h2>
-            <p className="text-gray-400 dark:text-gray-600 mt-1">
-              Curated just for you by our team
-            </p>
           </div>
 
           {/* Filter Tags */}

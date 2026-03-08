@@ -9,7 +9,7 @@ const TopBar = () => {
         {/* Left Side: Navigation Links */}
         <div className="flex items-center gap-3 sm:gap-4 flex-wrap font-lato">
           <Link
-            href="/store"
+            href="/shop"
             className="hover:text-[#e87831] dark:hover:text-[#e87831] transition-colors uppercase font-medium"
           >
             Store

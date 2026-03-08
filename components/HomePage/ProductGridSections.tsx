@@ -7,6 +7,7 @@ import {
   SparklesIcon,
   ArrowRightIcon,
 } from "lucide-react";
+import Link from "next/link";
 
 const ProductGridSections = () => {
   const sections = [
@@ -109,8 +110,8 @@ const ProductGridSections = () => {
     <section className="py-16 pt-8 bg-[#1a1a1a] dark:bg-white transition-colors duration-300">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-white dark:text-black mb-3">
+        <div className="text-center mb-20">
+          <h2 className="text-3xl md:text-4xl text-white dark:text-black">
             Discover Our Collections
           </h2>
           <p className="text-gray-400 dark:text-gray-600 max-w-2xl mx-auto">
@@ -128,13 +129,15 @@ const ProductGridSections = () => {
                 <div className="w-8 h-8 bg-gray-800 dark:bg-gray-200 rounded-lg flex items-center justify-center text-white dark:text-black">
                   {section.icon}
                 </div>
-                <h3 className="text-xl font-semibold text-white dark:text-black">
+                <h3 className="text-1xl md:text-2xl text-white dark:text-black">
                   {section.title}
                 </h3>
               </div>
 
               {/* Product List */}
-              <div className={`space-y-3 ${section.id !== sections[sections.length - 1].id ? 'border-r border-gray-600 dark:border-gray-400 pr-4' : ''}`}>
+              <div
+                className={`space-y-3 ${section.id !== sections[sections.length - 1].id ? "border-r border-gray-600 dark:border-gray-400 pr-4" : ""}`}
+              >
                 {section.products.map((product, index) => (
                   <div
                     key={product.id}
@@ -174,10 +177,12 @@ const ProductGridSections = () => {
               </div>
 
               {/* View All Link */}
-              <button className="inline-flex items-center gap-1 text-sm text-gray-400 dark:text-gray-600 hover:text-white dark:hover:text-black transition-colors group">
-                View all
-                <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </button>
+              <Link href={`/shop`} className="flex justify-start">
+                <button className="inline-flex items-center gap-1 text-sm text-gray-400 dark:text-gray-600 hover:text-white dark:hover:text-black transition-colors group">
+                  View all
+                  <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </button>
+              </Link>
             </div>
           ))}
         </div>

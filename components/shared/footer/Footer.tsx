@@ -20,15 +20,15 @@ const Footer = () => {
       { label: "Top Sellers", href: "/top-sellers" },
       { label: "About Us", href: "/about" },
       { label: "FAQs", href: "/faqs" },
-      { label: "Order Tracking", href: "/track" },
+      { label: "Order Tracking", href: "/track-order" },
     ],
     services: [
       { label: "My Account", href: "/account" },
       { label: "Login/Register", href: "/login" },
       { label: "My Orders", href: "/orders" },
       { label: "My Addresses", href: "/addresses" },
-      { label: "Order Help", href: "/help" }, // Fixed plural
-      { label: "Support", href: "/support" },
+      { label: "Order Help", href: "/contact" }, // Fixed plural
+      { label: "Support", href: "/contact" },
     ],
   };
 
